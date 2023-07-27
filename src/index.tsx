@@ -1,19 +1,34 @@
-import ReactDOM from "react-dom";
-import React from "react";
-import "./styles.scss";
+import * as React from "react";
+import { createRoot } from "react-dom/client";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  Link,
+} from "react-router-dom";
 
-function App() {
-  return (
-    <div>
-      <h1>Hello, wsadorld!</h1>
-    </div>
-  );
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <div>
+        <h1>Hello World</h1>
+        <Link to="profile">Go to my profile</Link>
+      </div>
+    ),
+  },
+  {
+    path: "profile",
+    element: <div>My Profile</div>,
+  },
+]);
+
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  createRoot(rootElement).render(<RouterProvider router={router} />);
 }
 
-if (typeof document !== "undefined") {
-  const rootElement = document.getElementById("root");
-  ReactDOM.render(<App />, rootElement);
-}
 if (module.hot) {
   module.hot.accept();
 }
