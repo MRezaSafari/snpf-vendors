@@ -1,0 +1,1 @@
+export type FetchMethod = 'POST' | 'GET' | 'DELETE' | 'PATCH';

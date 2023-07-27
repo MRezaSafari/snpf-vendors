@@ -6,16 +6,13 @@ import {
   Route,
   Link,
 } from "react-router-dom";
+import Vendors from "./pages/vendors";
+import "./styles.scss";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <div>
-        <h1>Hello World</h1>
-        <Link to="profile">Go to my profile</Link>
-      </div>
-    ),
+    element: <Vendors />,
   },
   {
     path: "profile",
@@ -26,7 +23,11 @@ const router = createBrowserRouter([
 const rootElement = document.getElementById("root");
 
 if (rootElement) {
-  createRoot(rootElement).render(<RouterProvider router={router} />);
+  createRoot(rootElement).render(
+    <main className="container">
+      <RouterProvider router={router} />
+    </main>
+  );
 }
 
 if (module.hot) {

@@ -12,9 +12,6 @@
       "skipLibCheck": true,
       "sourceMap": true,
       "baseUrl": ".",
-      "paths": {
-        "@/*": ["src/*"]
-      },
       "typeRoots": ["*.d.ts", "./node_modules/@types"],
     },
     "include": ["src/**/*"],

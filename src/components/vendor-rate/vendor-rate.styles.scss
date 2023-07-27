@@ -1,0 +1,23 @@
+.rating {
+  padding: 3px 5px 0px 5px;
+  border-radius: 4px;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  &__color--full-green {
+    background-color: rgba(63, 126, 0, 0.08);
+    color: #305d02;
+  }
+
+  &__color--medium-green {
+    background-color: rgba(91, 168, 41, 0.08);
+    color: #5ba839;
+  }
+
+  &__color--red {
+    background-color: rgb(243, 55, 55, 0.08);
+    color: rgb(247, 34, 34);
+  }
+}

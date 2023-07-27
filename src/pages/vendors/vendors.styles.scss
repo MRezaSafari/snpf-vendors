@@ -1,0 +1,10 @@
+.vendors {
+  margin: 1.5rem 0;
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    padding: 0;
+    margin-top: 1rem;
+  }
+}

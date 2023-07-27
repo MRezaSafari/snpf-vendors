@@ -1,3 +1,79 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Remove list styles on ul, ol elements */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Set default font size and line height */
 body {
-    background-color: red;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Remove default padding on buttons */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  padding: 0;
+}
+
+/* Remove border on images inside links */
+a img {
+  border: none;
+}
+
+html {
+  font-size: 16px;
+  height: 100%;
+}
+
+body {
+  direction: rtl;
+  font-size: 1rem;
+  font-family: "Vazirmatn", sans-serif;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  height: 100%;
+}
+
+.container {
+  max-width: 100%;
+  padding: 0 16px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    max-width: 750px;
+    padding: 0;
+  }
+
+  @media (min-width: 992px) {
+    max-width: 970px;
+  }
+
+  @media (min-width: 1200px) {
+    max-width: 1170px;
+  }
 }
