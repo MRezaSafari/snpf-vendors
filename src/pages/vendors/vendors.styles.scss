@@ -1,10 +1,22 @@
 .vendors {
-  margin: 1.5rem 0;
+  padding: 1rem 0;
   &__cards {
-    display: flex;
-    flex-direction: column;
-    row-gap: 1rem;
-    padding: 0;
-    margin-top: 1rem;
+    height: 100vh;
+    position: relative;
+    width: 100%;
+    overflow: auto;
+    will-change: transform;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      row-gap: 1rem;
+      padding: 0;
+    }
   }
 }

@@ -29,6 +29,7 @@ ol {
 body {
   font-size: 16px;
   line-height: 1.5;
+  overflow-y: hidden;
 }
 
 /* Remove default padding on buttons */
@@ -57,6 +58,7 @@ body {
   color: #333;
   background-color: #fff;
   height: 100%;
+
 }
 
 .container {

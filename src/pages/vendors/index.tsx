@@ -5,7 +5,7 @@ import {
   VendorEntity,
   RootState,
 } from "../../models";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Vendor from "../../components/vendor-card";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,54 +14,100 @@ import "./vendors.styles.scss";
 const Vendors: FC = () => {
   const dispatch = useDispatch();
   const vendors = useSelector((state: RootState) => state.vendors.data);
+  const CardsRef = useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [visibleItems, setVisibleItems] = useState<VendorModel[]>([]);
+
   let debounceTimer: any = null;
 
   useEffect(() => {
+    // First list call
     dispatch({ type: "FETCH_VENDORS" });
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Calculate the 2/3 mark of the page height
-      // I think it's working smoothly for now, buy maybe we can tweak it even further
-      const twoThirdsPageHeight = (2 / 3) * document.body.scrollHeight;
+      if (!CardsRef.current) return;
 
-      // Check if the user has reached almost 2/3 of the page
-      if (window.innerHeight + window.scrollY >= twoThirdsPageHeight) {
-        // Clear the previous timer if it exists
+      setScrollTop(CardsRef.current.scrollTop);
+      // Calculate the 2/3 mark of the CardsRef height
+      const twoThirdsCardsHeight = (2 / 3) * CardsRef.current.scrollHeight;
+      // Check if the user has reached almost 2/3 of the CardsRef
+      if (
+        CardsRef.current.scrollTop + CardsRef.current.clientHeight >=
+        twoThirdsCardsHeight
+      ) {
         clearTimeout(debounceTimer);
 
-        // Dispatch the action to fetch the next page after a delay
+        // Dispatch the action to fetch the next page after a delay so we don't call the request many times
         debounceTimer = setTimeout(() => {
           dispatch({ type: "FETCH_NEXT_PAGE" });
         }, 100);
       }
     };
+    // Attach the scroll event listener to the CardsRef element
+    if (CardsRef.current) {
+      CardsRef.current.addEventListener("scroll", handleScroll);
+    }
 
-    window.addEventListener("scroll", handleScroll);
-
+    // Clean up the event listener when the component is unmounted
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      if (CardsRef.current) {
+        CardsRef.current.removeEventListener("scroll", handleScroll);
+      }
       clearTimeout(debounceTimer);
     };
-  }, [dispatch]);
+  }, [CardsRef.current]);
 
-  if (!vendors || vendors.length === 0) return <>No Result</>;
+  useEffect(() => {
+    const itemHeight = 260;
+    if (!CardsRef.current) return;
+    const containerHeight = vendors.length * itemHeight;
+    const startIdx = Math.floor(scrollTop / itemHeight);
+    const endIdx = Math.min(
+      startIdx + Math.ceil(containerHeight / itemHeight) + 1,
+      vendors.length
+    );
+
+    setVisibleItems(vendors.slice(startIdx, endIdx));
+  }, [vendors, scrollTop]);
 
   const renderVendors = () =>
-    vendors
+    visibleItems &&
+    visibleItems
       .filter((x) => x.type === "VENDOR")
-      .map((v) => (
-        <Vendor
-          key={(v.data as VendorEntity).id}
-          vendor={v.data as VendorEntity}
-        />
+      .map((v, i) => (
+        <div
+          style={{
+            position: "absolute",
+            top:
+              // find the real index of our vendor inside the vendors state
+              (vendors.findIndex(
+                (x) =>
+                  (x.data as VendorEntity).id === (v.data as VendorEntity).id
+              ) -
+                1) *
+              260,
+            width: "100%",
+          }}
+        >
+          <Vendor
+            key={(v.data as VendorEntity).id}
+            vendor={v.data as VendorEntity}
+          />
+        </div>
       ));
 
   return (
     <div className="vendors">
-      <h3>{vendors.filter((x) => x.type === "TEXT")[0].data.toString()}</h3>
-      <div className="vendors__cards">{renderVendors()}</div>
+      <div className="vendors__cards" ref={CardsRef}>
+        {!vendors && <div>Loading ...</div>}
+        {vendors && (
+          <div style={{ height: vendors.length * 255 + "px" }}>
+            {renderVendors()}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
