@@ -1,6 +1,7 @@
-type VendorType = "VENDOR" | "TEXT";
 
-type DataType = string | VendorEntity;
+export type VendorType = "VENDOR" | "TEXT";
+
+export type DataType = string | VendorEntity;
 
 export interface VendorEntity {
   id: number;

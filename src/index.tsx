@@ -7,6 +7,9 @@ import {
   Link,
 } from "react-router-dom";
 import Vendors from "./pages/vendors";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+
 import "./styles.scss";
 
 const router = createBrowserRouter([
@@ -24,9 +27,11 @@ const rootElement = document.getElementById("root");
 
 if (rootElement) {
   createRoot(rootElement).render(
-    <main className="container">
-      <RouterProvider router={router} />
-    </main>
+    <Provider store={store}>
+      <main className="container">
+        <RouterProvider router={router} />
+      </main>
+    </Provider>
   );
 }
 

@@ -3,51 +3,53 @@ import {
   VendorsModel,
   VendorModel,
   VendorEntity,
+  RootState,
 } from "../../models";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import { fetcher } from "../../utilities";
-import { stringify } from "querystring";
+import React, { FC, useEffect } from "react";
 import Vendor from "../../components/vendor-card";
+import { useDispatch, useSelector } from "react-redux";
+
 import "./vendors.styles.scss";
 
 const Vendors: FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [data, setData] = useState<VendorModel[]>([]);
+  const dispatch = useDispatch();
+  const vendors = useSelector((state: RootState) => state.vendors.data);
+  let debounceTimer: any = null;
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchVendors(page);
-      setIsLoading(false);
+    dispatch({ type: "FETCH_VENDORS" });
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Calculate the 2/3 mark of the page height
+      // I think it's working smoothly for now, buy maybe we can tweak it even further
+      const twoThirdsPageHeight = (2 / 3) * document.body.scrollHeight;
+
+      // Check if the user has reached almost 2/3 of the page
+      if (window.innerHeight + window.scrollY >= twoThirdsPageHeight) {
+        // Clear the previous timer if it exists
+        clearTimeout(debounceTimer);
+
+        // Dispatch the action to fetch the next page after a delay
+        debounceTimer = setTimeout(() => {
+          dispatch({ type: "FETCH_NEXT_PAGE" });
+        }, 100);
+      }
     };
 
-    fetchData();
-  }, [page]);
+    window.addEventListener("scroll", handleScroll);
 
-  const fetchVendors = async (page: number) => {
-    const baseUrl = API_PATH.GET_VENDORS;
-    const params = {
-      page: page,
-      page_size: 10,
-      lat: 35.774,
-      long: 51.418,
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(debounceTimer);
     };
+  }, [dispatch]);
 
-    const url = [baseUrl, stringify(params)].join("");
-
-    const vendorsResponse = await fetcher<VendorsModel>("GET", url);
-
-    if (vendorsResponse && vendorsResponse.data.finalResult.length > 0) {
-      setData([...data, ...vendorsResponse.data.finalResult]);
-    }
-  };
-
-  if (isLoading) return <>Loading</>;
-
-  if (!data) return <>No Result</>;
+  if (!vendors || vendors.length === 0) return <>No Result</>;
 
   const renderVendors = () =>
-    data
+    vendors
       .filter((x) => x.type === "VENDOR")
       .map((v) => (
         <Vendor
@@ -58,7 +60,7 @@ const Vendors: FC = () => {
 
   return (
     <div className="vendors">
-      <h3>{data.filter((x) => x.type === "TEXT")[0].data.toString()}</h3>
+      <h3>{vendors.filter((x) => x.type === "TEXT")[0].data.toString()}</h3>
       <div className="vendors__cards">{renderVendors()}</div>
     </div>
   );
